@@ -19,11 +19,11 @@ router.post(
     check('password', 'Password should be between 5 to 8 characters long')
       .not()
       .isEmpty()
-      .isLength({ min: 5, max: 8 }),
+      .isLength({ min: 5, max: 20 }),
   ],
   (req, res, next) => {
     const errors = validationResult(req)
-    console.log(req.body)
+    console.log(req.body);
 
     if (!errors.isEmpty()) {
       return res.status(422).jsonp(errors.array())
@@ -53,7 +53,7 @@ router.post(
 )
 
 // Sign-in
-router.post('/signin', (req, res, next) => {
+router.post('/login-user', (req, res, next) => {
   let getUser
   userSchema
     .findOne({
@@ -151,6 +151,7 @@ router.route('/delete-user/:id').delete((req, res, next) => {
       })
     }
   })
-})
+});
+
 
 module.exports = router
