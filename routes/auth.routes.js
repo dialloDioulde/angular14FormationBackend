@@ -1,10 +1,14 @@
-const express = require('express')
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
-const router = express.Router()
-const userSchema = require('../models/User')
-const authorize = require('../middlewares/auth')
-const { check, validationResult } = require('express-validator')
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const router = express.Router();
+const userSchema = require('../models/User');
+const authorize = require('../middlewares/auth');
+const { check, validationResult } = require('express-validator');
+
+const multer = require('multer');
+
+const Role = require('../models/role');
 
 // Sign-up
 router.post(
@@ -33,6 +37,7 @@ router.post(
           name: req.body.name,
           email: req.body.email,
           password: hash,
+          role: Role.User,
         })
         user
           .save()
@@ -40,7 +45,8 @@ router.post(
             res.status(201).json({
               message: 'User successfully created!',
               result: response,
-            })
+            });
+            console.log(response);
           })
           .catch((error) => {
             res.status(500).json({
@@ -78,6 +84,7 @@ router.post('/login-user', (req, res, next) => {
         {
           email: getUser.email,
           userId: getUser._id,
+          role: getUser.role,
         },
         'longer-secret-is-better',
         {
@@ -119,7 +126,7 @@ router.route('/user-profile/:id').get(authorize, (req, res, next) => {
         msg: data,
       })
     }
-  })
+  });
 })
 
 // Update User
@@ -138,7 +145,7 @@ router.route('/update-user/:id').put((req, res, next) => {
       }
     },
   )
-})
+});
 
 // Delete User
 router.route('/delete-user/:id').delete((req, res, next) => {
@@ -153,5 +160,26 @@ router.route('/delete-user/:id').delete((req, res, next) => {
   })
 });
 
+
+// POSTS //
+const posts = require("../controllers/PostController");
+// Create a new Post
+router.post("/create-post", posts.create);
+// Get all posts
+router.get("/all-post", posts.allPosts);
+// Update a new Post
+router.put("/update-post/:id", posts.updatePost);
+// Delete a post
+router.delete("/delete-post/:id", posts.deletePost);
+
+
+// POSTS IMAGES //
+const postImages = require("../controllers/PostImageController");
+// Upload image of post
+router.post("/upload-post-image", postImages.upload.single('avatar'), postImages.uploadPostImage);
+// Get all images of posts
+router.get("/all-image-post", postImages.allImageOfPost);
+// Delete all images of posts
+//router.delete("/delete-all-image-post", postImages.deleteAllImageOfPosts);
 
 module.exports = router

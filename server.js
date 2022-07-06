@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 
 // Express APIs
-const api = require('./routes/auth.routes')
+const api = require('./routes/auth.routes');
 
 mongoose
   .connect('mongodb://127.0.0.1:27017/mydatabase')
@@ -26,8 +26,9 @@ app.use(
 app.use(cors())
 
 // Serve static resources
-app.use('/public', express.static('public'))
-app.use('/api', api)
+app.use('/public', express.static('public'));
+app.use('/api', api);
+
 
 // Define PORT
 const port = process.env.PORT || 4000
